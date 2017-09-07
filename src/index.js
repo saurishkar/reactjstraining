@@ -19,6 +19,7 @@ class Board extends React.Component {
     this.state ={
       squares: Array(9).fill(null),
       xIsNext: true,
+      isDrawn: false,
     };
   }
   handleClick(i) {
@@ -28,6 +29,9 @@ class Board extends React.Component {
     }
     squares[i] = this.state.xIsNext?'X':'O';
     this.setState({squares: squares, xIsNext: !this.state.xIsNext});
+    if (!checkIfEmpty(squares) && !calculateWinner(squares)) {
+        this.setState({isDrawn: true});
+    }
   }
   renderSquare(i) {
     return <Square 
@@ -41,7 +45,11 @@ class Board extends React.Component {
     if (winner) {
       status = 'Player '+winner+' wins';
     } else {
-      status= 'Next Player: '+ (this.state.xIsNext?'X':'O');
+      if (this.state.isDrawn) {
+        status = 'Match Drawn';
+      } else {
+        status= 'Next Player: '+ (this.state.xIsNext?'X':'O');
+      }
     }
     return (
       <div>
@@ -106,4 +114,12 @@ function calculateWinner(squares) {
     }
   }
   return null;
+}
+function checkIfEmpty(squares) {
+  for (let i=0;i<squares.length; i++) {
+    if (squares[i] === null) {
+      return true;
+    }
+  }
+  return false;
 }
